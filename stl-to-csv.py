@@ -1,48 +1,19 @@
-import tkinter as tk
-import tkinter.ttk as ttk
-from tkinter import filedialog
 from subprocess import Popen
 import os, errno
 import struct
-
-LARGE_FONT= ("Verdana", 12)
-NORM_FONT = ("Helvetica", 10)
-SMALL_FONT = ("Helvetica", 8)
-
-def validate_filetype():
-    files = filedialog.askopenfilenames(title = "Please Select One or More .stl Files to Convert")
-    
-    for file in files:
-        file_type = file.split('.')[1]
-        if (file_type != "stl"):
-            msg = "The file " + file + " is not a .stl. Please Try Again" 
-            popup_msg(msg)
-            print("here")
-
-    return files
-        
-def popup_msg(msg):
-    popup = tk.Tk()
-    popup.wm_title("!")
-    label = ttk.Label(popup, text=msg, font=NORM_FONT)
-    label.pack(side="top", fill="x", pady=10)
-    B1 = ttk.Button(popup, text="Okay", command = exit)
-    B1.pack()
-    popup.mainloop()
+import sys
 
 def append_csv(file, coords):
     csv_line = coords[0] + "," + coords[1] + "," + coords[2] + '\n'
     file.write(csv_line)
 
 def main():
-    root = tk.Tk()
-    root.withdraw()
-
-    files = validate_filetype()
+    files = sys.argv[1:]
+    if len(files) == 0:
+        print("No file provided.")
 
     for file in files:
-
-        try: 
+        try:
             csv = file.replace('.stl', '-table.csv')
             stl_file = open(file, 'r')
             list_of_lines = stl_file.readlines()
@@ -65,7 +36,6 @@ def main():
 
         csv_file.close()
         stl_file.close()
-        p = Popen(csv, shell=True)
 
 def silent_remove(filename):
     try:
